@@ -16,10 +16,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.cargo/registry/cache
-            ~/.cargo/registry/src
+            ~/.cargo/registry
             ~/.cargo/git
-          key: "generic-test:build-docs:${{ matrix.runner_type }}"
+          key: "generic-test:build-docs:ver1:${{ matrix.runner_type }}"
       - name: Fetch stable toolchain
         uses: actions-rs/toolchain@v1
         with:
