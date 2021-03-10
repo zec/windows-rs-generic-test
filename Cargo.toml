@@ -9,8 +9,8 @@ publish = false
 
 [dependencies]
 #windows = "0.3.1"
-windows = { git = "https://github.com/microsoft/windows-rs.git", branch = "master" }
+windows = { git = "https://github.com/zec/windows-rs.git", branch = "generic-interface-impl" }
 
 [build-dependencies]
 #windows = "0.3.1"
-windows = { git = "https://github.com/microsoft/windows-rs.git", branch = "master" }
+windows = { git = "https://github.com/zec/windows-rs.git", branch = "generic-interface-impl" }
