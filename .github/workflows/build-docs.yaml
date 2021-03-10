@@ -1,0 +1,45 @@
+name: Build and archive docs (including private items)
+
+on: workflow_dispatch
+
+jobs:
+  run-docs:
+    name: "Document crate and dependencies"
+    runs-on: ${{ matrix.runner_type }}
+    strategy:
+      matrix:
+        runner_type: [ 'windows-2019' ]
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v2
+      - name: Cache Cargo downloads
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry/cache
+            ~/.cargo/registry/src
+            ~/.cargo/git
+          key: "generic-test:build-docs:${{ matrix.runner_type }}"
+      - name: Fetch stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: "Run `cargo doc`"
+        uses: actions-rs/cargo@v1
+        with:
+          command: doc
+          args: --document-private-items
+      - name: Move docs directory
+        run: mv target/doc doc-${{ matrix.runner_type }}
+        shell: bash
+        working-directory: .
+      - name: Tar up docs
+        run: tar -c -z -f docs.tar.gz doc-${{ matrix.runner_type }}
+        shell: bash
+        working-directory: .
+      - name: Archive docs
+        uses: actions/upload-artifact@v2
+        with:
+          name: docs-${{ matrix.runner_type }}
+          path: docs.tar.gz
+          retention-days: 30

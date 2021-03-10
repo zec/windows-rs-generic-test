@@ -1,0 +1,42 @@
+name: Build project
+
+on: workflow_dispatch
+
+jobs:
+  run-build:
+    name: "Try building the crate with `cargo build`"
+    runs-on: ${{ matrix.runner_type }}
+    strategy:
+      matrix:
+        runner_type: [ 'windows-2019' ]
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v2
+      - name: Cache recent-ish Cargo downloads (later refined)
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry/cache
+            ~/.cargo/registry/src
+            ~/.cargo/git
+          key: "generic-test:build:coarse-ver0:${{ matrix.runner_type }}"
+      - name: Update Cargo lockfile
+        uses: actions-rs/cargo@v1
+        with:
+          command: update
+      - name: Cache run output (specific to dependency versions)
+        uses: actions/cache@v2
+        with:
+          path: |
+            target
+          key: "generic-test:build:fine-ver0:${{ matrix.runner_type }}:${{ hashFiles('**/Cargo.lock') }}"
+          restore-keys: "generic-test:build:fine-ver0:${{ matrix.runner_type }}:"
+      - name: Fetch stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: "Run `cargo build`"
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --bins
