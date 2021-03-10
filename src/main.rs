@@ -6,7 +6,7 @@ mod bindings {
 
     use std::cmp::min;
     use std::sync::Arc;
-    use ::windows::{HString, Error, ErrorCode};
+    use ::windows::{HString, Error, ErrorCode, RuntimeType};
     use self::windows::win32::debug::SetLastError;
     use self::windows::win32::system_services::E_BOUNDS;
 
@@ -22,14 +22,15 @@ mod bindings {
         }
     }
 
-    struct TestIterator {
-        v: Arc<Vec<HString>>,
+    #[::windows::implement(windows::foundation::collections::IIterator<T>)]
+    struct TestIterator<T: RuntimeType + Clone + 'static> {
+        v: Arc<Vec<T>>,
         idx: usize,
     }
 
     // IIterator impl
-    impl TestIterator {
-        fn current(&self) -> Result<HString, Error> {
+    impl<T: RuntimeType + Clone + 'static> TestIterator<T> {
+        fn current(&self) -> Result<T, Error> {
             if self.idx < self.v.len() {
                 Ok(self.v[self.idx].clone())
             } else {
@@ -52,7 +53,7 @@ mod bindings {
             Ok(self.idx < self.v.len())
         }
 
-        fn get_many(&mut self, items: &mut [HString]) -> Result<u32, Error> {
+        fn get_many(&mut self, items: &mut [T]) -> Result<u32, Error> {
             let base = self.idx;
             let num_to_copy = min(self.v.len() - base, items.len());
             for i in 0..num_to_copy {
