@@ -39,3 +39,9 @@ jobs:
         with:
           command: build
           args: --bins
+      - name: Archive generated .rs files
+        uses: actions/upload-artifact@v2
+        with:
+          name: generated
+          path: target/**/*.rs
+          retention-days: 7

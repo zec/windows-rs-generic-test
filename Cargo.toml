@@ -8,9 +8,9 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-#windows = "0.3.1"
+#windows = "0.4.0"
 windows = { git = "https://github.com/zec/windows-rs.git", branch = "generic-interface-impl" }
 
 [build-dependencies]
-#windows = "0.3.1"
+#windows = "0.4.0"
 windows = { git = "https://github.com/zec/windows-rs.git", branch = "generic-interface-impl" }

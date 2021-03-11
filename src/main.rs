@@ -22,7 +22,7 @@ mod bindings {
         }
     }
 
-    #[::windows::implement(windows::foundation::collections::IIterator<T>)]
+    //#[::windows::implement(windows::foundation::collections::IIterator<T>)]
     struct TestIterator<T: RuntimeType + Clone + 'static> {
         v: Arc<Vec<T>>,
         idx: usize,
