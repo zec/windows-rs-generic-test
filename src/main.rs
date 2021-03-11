@@ -8,8 +8,7 @@ mod bindings {
 
     use std::cmp::min;
     use std::sync::Arc;
-    use ::windows::{HString, Error, ErrorCode, RuntimeType};
-    use self::windows::win32::debug::SetLastError;
+    use ::windows::{HString, Error, ErrorCode};
     use self::windows::win32::system_services::E_BOUNDS;
 
     #[::windows::implement(windows::foundation::IStringable)]
@@ -36,8 +35,7 @@ mod bindings {
             if self.idx < self.v.len() {
                 Ok(self.v[self.idx].clone())
             } else {
-                unsafe { SetLastError(E_BOUNDS as u32); }
-                Err(ErrorCode::from_thread().into())
+                Err(ErrorCode(E_BOUNDS as u32).into())
             }
         }
 
@@ -47,8 +45,7 @@ mod bindings {
 
         fn move_next(&mut self) -> Result<bool, Error> {
             if self.idx >= self.v.len() {
-                unsafe { SetLastError(E_BOUNDS as u32); }
-                return Err(ErrorCode::from_thread().into())
+                return Err(ErrorCode(E_BOUNDS as u32).into())
             }
 
             self.idx += 1;
