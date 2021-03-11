@@ -1,0 +1,2 @@
+A quick proof-of-concept of implementing a COM interface with a generic
+parameter in Rust using windows-rs.
