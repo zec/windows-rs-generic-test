@@ -76,12 +76,12 @@ mod bindings {
     }
     #[repr(C)]
     struct TestIterator_box {
-        vtable: (*const windows::foundation::collections::IIterator_abi,),
+        vtable: (*const windows::foundation::collections::IIterator_abi::<HString>,),
         inner: TestIterator,
         count: ::windows::RefCount,
     }
     impl TestIterator_box {
-        const VTABLE: (windows::foundation::collections::IIterator_abi<HString>) =
+        const VTABLE: (windows::foundation::collections::IIterator_abi::<HString>) =
             (windows::foundation::collections::IIterator_abi<HString>(
                 Self::QueryInterface_abi0,
                 Self::AddRef_abi0,
@@ -105,7 +105,25 @@ mod bindings {
         fn QueryInterface(&mut self, iid: &::windows::Guid,
                           interface: *mut ::windows::RawPtr)
          -> ::windows::ErrorCode {
-    // TODO
+            unsafe {
+                *interface =
+                    match iid {
+                        &<windows::foundation::IIterator<HString> as
+                        ::windows::Interface>::IID => {
+                            &mut self.vtable.0 as *mut _ as _
+                        }
+                        &<::windows::IUnknown as ::windows::Interface>::IID |
+                        &<::windows::Object as ::windows::Interface>::IID |
+                        &<::windows::IAgileObject as
+                        ::windows::Interface>::IID => {
+                            &mut self.vtable.0 as *mut _ as _
+                        }
+                        _ => ::std::ptr::null_mut(),
+                    };
+                if (*interface).is_null() {
+                    ::windows::ErrorCode::E_NOINTERFACE
+                } else { self.count.add_ref(); ::windows::ErrorCode::S_OK }
+            }
         }
         fn AddRef(&mut self) -> u32 { self.count.add_ref() }
         fn Release(&mut self) -> u32 {
@@ -160,7 +178,7 @@ mod bindings {
         }
         unsafe extern "system" fn Current_abi0(
             this: ::windows::RawPtr,
-            result__: *mut <T as ::windows::Abi>::Abi,
+            result__: *mut <HString as ::windows::Abi>::Abi,
         ) -> ::windows::ErrorCode {
             let this = (this as *mut ::windows::RawPtr).sub(0usize) as *mut Self;
             match (*this).inner.current() {
@@ -203,11 +221,11 @@ mod bindings {
         pub  unsafe extern "system" fn GetMany_abi0(
             this: ::windows::RawPtr,
             items_array_size: u32,
-            items: *mut <T as ::windows::Abi>::Abi,
+            items: *mut <HString as ::windows::Abi>::Abi,
             result__: *mut u32,
         ) -> ::windows::ErrorCode {
             let this = (this as *mut ::windows::RawPtr).sub(0usize) as *mut Self;
-            let mut_slice: &mut [HString] = ::str::ptr::slice_from_raw_parts(items, items_array_size as usize);
+            let mut_slice: &mut [HString] = ::std::ptr::slice_from_raw_parts(items, items_array_size as usize);
             match (*this).inner.move_next() {
                 ::std::result::Result::Ok(ok__) => {
                     *result__ = ::std::mem::transmute_copy(&ok__);
