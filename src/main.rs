@@ -22,15 +22,15 @@ mod bindings {
         }
     }
 
-    //#[::windows::implement(windows::foundation::collections::IIterator<T>)]
-    struct TestIterator<T: RuntimeType + Clone + 'static> {
-        v: Arc<Vec<T>>,
+    //#[::windows::implement(windows::foundation::collections::IIterator<HString>)]
+    struct TestIterator {
+        v: Arc<Vec<HString>>,
         idx: usize,
     }
 
     // IIterator impl
-    impl<T: RuntimeType + Clone + 'static> TestIterator<T> {
-        fn current(&self) -> Result<T, Error> {
+    impl TestIterator {
+        fn current(&self) -> Result<HString, Error> {
             if self.idx < self.v.len() {
                 Ok(self.v[self.idx].clone())
             } else {
@@ -53,7 +53,7 @@ mod bindings {
             Ok(self.idx < self.v.len())
         }
 
-        fn get_many(&mut self, items: &mut [T]) -> Result<u32, Error> {
+        fn get_many(&mut self, items: &mut [HString]) -> Result<u32, Error> {
             let base = self.idx;
             let num_to_copy = min(self.v.len() - base, items.len());
             for i in 0..num_to_copy {
