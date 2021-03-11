@@ -5,11 +5,20 @@ extern crate windows;
 #[allow(dead_code)]
 mod bindings {
     ::windows::include_bindings!();
+}
+
+fn main() {
+    println!("Hello, world!");
+}
+
+pub mod interface_tests {
+
+    use super::bindings::windows;
 
     use std::cmp::min;
     use std::sync::Arc;
     use ::windows::{HString, Error, ErrorCode};
-    use self::windows::win32::system_services::E_BOUNDS;
+    use super::bindings::windows::win32::system_services::E_BOUNDS;
 
     #[::windows::implement(windows::foundation::IStringable)]
     pub struct TestStringable {
@@ -23,8 +32,7 @@ mod bindings {
         }
     }
 
-    //#[::windows::implement(windows::foundation::collections::IIterator<HString>)]
-    struct TestIterator {
+    pub struct TestIterator {
         v: Arc<Vec<HString>>,
         idx: usize,
     }
@@ -235,8 +243,4 @@ mod bindings {
             }
         }
     }
-}
-
-fn main() {
-    println!("Hello, world!");
 }
