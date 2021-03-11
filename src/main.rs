@@ -1,3 +1,5 @@
+#![allow(non_snake_case)]
+
 extern crate windows;
 
 #[allow(dead_code)]
@@ -81,8 +83,8 @@ mod bindings {
         count: ::windows::RefCount,
     }
     impl TestIterator_box {
-        const VTABLE: (windows::foundation::collections::IIterator_abi::<HString>) =
-            (windows::foundation::collections::IIterator_abi<HString>(
+        const VTABLE: (windows::foundation::collections::IIterator_abi::<HString>,) =
+            (windows::foundation::collections::IIterator_abi::<HString>(
                 Self::QueryInterface_abi0,
                 Self::AddRef_abi0,
                 Self::Release_abi0,
@@ -93,11 +95,11 @@ mod bindings {
                 Self::HasCurrent_abi0,
                 Self::MoveNext_abi0,
                 Self::GetMany_abi0,
-                PhantomData<HString>
-            ));
+                ::std::marker::PhantomData::<HString>
+            ),);
         fn new(inner: TestIterator) -> Self {
             Self {
-                vtable: (&Self::VTABLE.0),
+                vtable: (&Self::VTABLE.0,),
                 inner,
                 count: ::windows::RefCount::new(),
             }
@@ -108,7 +110,7 @@ mod bindings {
             unsafe {
                 *interface =
                     match iid {
-                        &<windows::foundation::IIterator<HString> as
+                        &<windows::foundation::collections::IIterator::<HString> as
                         ::windows::Interface>::IID => {
                             &mut self.vtable.0 as *mut _ as _
                         }
@@ -225,8 +227,8 @@ mod bindings {
             result__: *mut u32,
         ) -> ::windows::ErrorCode {
             let this = (this as *mut ::windows::RawPtr).sub(0usize) as *mut Self;
-            let mut_slice: &mut [HString] = ::std::ptr::slice_from_raw_parts(items, items_array_size as usize);
-            match (*this).inner.move_next() {
+            let mut_slice: &mut [HString] = ::std::slice::from_raw_parts_mut(items as *mut HString, items_array_size as usize);
+            match (*this).inner.get_many(mut_slice) {
                 ::std::result::Result::Ok(ok__) => {
                     *result__ = ::std::mem::transmute_copy(&ok__);
                     ::std::mem::forget(ok__);
